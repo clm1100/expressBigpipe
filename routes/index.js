@@ -1,33 +1,38 @@
 
 var express = require('express');
 var router = express.Router();
-// const sleep = ms => new Promise(r => setTimeout(r, ms))
-function sleep(ms){
-  return new Promise(function(resolve,reject){
-    setTimeout(resolve,ms)
-  })
-}
-/* GET home page. */
-router.get('/', function (req, res) {
-  res.type('html');   
-  res.write('loading...<br>')
-  sleep(3000).then(function(){
-    res.write('22222222');
-    return sleep(3000)
-  }).then(function(){
+var fs = require('fs');
+var path = require('path');
 
-    res.end("3333")
+/* GET home page. */
+router.get('/', function(req, res, next) {
+  res.render('index', { title: 'Express' },function(err,str){
+    // res.type('html');
+    res.write(str)
+    
+    setTimeout(function(){
+      res.write("<h1>33333</h1>") 
+      res.end("ok")
+    },3000)
+  });
+});
+
+
+router.get('/tt', (req, res) => {
+  const stream = fs.createReadStream(path.join(__dirname,'1.text'));
+  let n =0
+  res.write(`<!DOCTYPE html><html><head><title>我是测试的</title></head><body>`)
+
+  stream.on('data', chunk => {
+    console.log(++n);
+    console.log(chunk.length)
+    res.write(chunk)
   })
   
-  // return sleep(2000).then(function() {
-  //   res.write(`timer: 2000ms<br>`)
-  //   return sleep(5000)
-  // })
-  // .then(function() {
-  //   res.write(`timer: 5000ms<br>`)
-  // }).then(function() {
-  //   res.end()
-  // })
-});
+
+  stream.on('end', () => {
+    res.end('</body></html>')
+  })
+})
 
 module.exports = router;
