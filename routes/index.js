@@ -9,9 +9,10 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' },function(err,str){
     // res.type('html');
     res.write(str)
+    console.log(str);
     
     setTimeout(function(){
-      res.write("<h1>33333</h1>") 
+      res.write(str) 
       res.end("ok")
     },3000)
   });
